@@ -1,6 +1,5 @@
 .game {
-  max-width: 900px;
-  margin: 40px auto;
+
 }
 
 button {
@@ -20,7 +19,12 @@ button:hover {
   color: #E0BBE4;
 }
 
-img {
-  width: 100px;
-  height: 100px;
+.cards {
+  max-width: 900px;
+  margin: 40px auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  gap: 30px;
 }
