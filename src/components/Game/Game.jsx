@@ -4,24 +4,44 @@ import Card from '../Card/Card';
 import styles from './Game.module.css';
 
 const cardImages = [
-  { src: '/img/coffee-1.svg' },
-  { src: '/img/doughnut-1.svg' },
-  { src: '/img/hamburger-1.svg' },
-  { src: '/img/ice-cream-1.svg' },
-  { src: '/img/juice-1.svg' },
-  { src: '/img/pizza-1.svg' }
+  { src: '/img/coffee.svg' },
+  { src: '/img/doughnut.svg' },
+  { src: '/img/hamburger.svg' },
+  { src: '/img/ice-cream.svg' },
+  { src: '/img/juice.svg' },
+  { src: '/img/pizza.svg' }
 ];
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
+    this.handleCard = this.handleCard.bind(this);
+
     this.state = {
       cards: [...cardImages, ...cardImages],
+      firstCard: null,
+      secondCard: null
     };
   }
 
   handleCard(card) {
-    console.log(card);
+    this.state.firstCard ? this.setState({ secondCard: card }) : this.setState({ firstCard: card });
+  }
+
+  resetCardsChoice() {
+    this.setState({ firstCard: null, secondCard: null });
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (this.state.firstCard !== prevState.firstCard || this.state.secondCard !== prevState.secondCard) {
+      if (this.state.firstCard && this.state.secondCard) {
+        if (this.state.firstCard === this.state.secondCard) {
+          this.resetCardsChoice();
+        } else {
+          this.resetCardsChoice();
+        }
+      }
+    }
   }
 
   render() {
