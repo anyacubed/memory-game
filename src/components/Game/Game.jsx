@@ -21,31 +21,48 @@ class Game extends React.Component {
     this.state = {
       cards: [],
       firstCard: null,
-      secondCard: null
+      secondCard: null,
+      matched: []
     };
   }
 
   shuffleCards() {
-    const shuffled = [...cardImages, ...cardImages].sort(() => 0.5 - Math.random());
-    this.setState({ cards: shuffled });
+    const shuffled = [...cardImages, ...cardImages].sort(() => 0.5 - Math.random()).map((image, i) => {
+      return ({ ...image, id: i});
+    });
+    this.setState({ cards: shuffled, matched: []});
   }
 
   handleCard(card) {
-    console.log(card)
-    this.state.firstCard ? this.setState({ secondCard: card }) : this.setState({ firstCard: card });
+    if (this.state.firstCard && this.state.secondCard) {
+      return;
+    }
+
+    if (this.state.firstCard) {
+      this.setState({ secondCard: card });
+    } else {
+      this.setState({ firstCard: card });
+    }
   }
 
-  resetCardsChoice() {
+  resetChosenCards() {
     this.setState({ firstCard: null, secondCard: null });
+  }
+
+  componentDidMount() {
+    this.shuffleCards();
   }
 
   componentDidUpdate(_, prevState) {
     if (this.state.firstCard !== prevState.firstCard || this.state.secondCard !== prevState.secondCard) {
       if (this.state.firstCard && this.state.secondCard) {
-        if (this.state.firstCard === this.state.secondCard) {
-          this.resetCardsChoice();
+        const isMatched = this.state.firstCard.src === this.state.secondCard.src;
+
+        if (isMatched) {
+          this.resetChosenCards();
+          this.setState({ matched: [...this.state.matched, this.state.firstCard.id, this.state.secondCard.id] });
         } else {
-          this.resetCardsChoice();
+          setTimeout(() => this.resetChosenCards(), 1500);
         }
       }
     }
@@ -58,10 +75,15 @@ class Game extends React.Component {
         <button onClick={this.shuffleCards}>New game</button>
         <div className={styles.cards}>
           {this.state.cards.map((card, i) => {
+            const isFlipped =
+            card === this.state.firstCard ||
+            card === this.state.secondCard ||
+            this.state.matched.includes(card.id);
+
             return <Card
               card={card}
               handleCard={this.handleCard}
-              flipped={card === this.state.firstCard || card === this.state.secondCard}
+              flipped={isFlipped}
               key={i}
             />
           })}
