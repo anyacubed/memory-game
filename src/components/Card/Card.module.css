@@ -4,4 +4,11 @@
   border: 5px solid #643494;
   border-radius: 8px;
   padding: 4px 8px;
+  position: relative;
+  transform: rotateY(0);
+}
+
+.covered {
+  position: absolute;
+  transform: rotateY(90deg);
 }

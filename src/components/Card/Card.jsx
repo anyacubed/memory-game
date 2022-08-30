@@ -16,8 +16,17 @@ class Card extends React.Component {
   render() {
     return (
       <>
-        <img className={styles.card} src={this.props.card.src} alt=''></img>
-        <img className={styles.card} src='/img/default.svg' onClick={this.handleClick} alt='default card'></img>
+        <img
+          className={`${styles.card} ${this.props.flipped ? '' : styles.covered}`}
+          src={this.props.card.src}
+          alt=''>
+        </img>
+        <img
+          className={`${styles.card} ${this.props.flipped ? styles.covered : ''}`}
+          src='/img/default.svg'
+          onClick={this.handleClick}
+          alt='default card'>
+        </img>
       </>
     )
   }

@@ -16,15 +16,22 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.handleCard = this.handleCard.bind(this);
+    this.shuffleCards = this.shuffleCards.bind(this);
 
     this.state = {
-      cards: [...cardImages, ...cardImages],
+      cards: [],
       firstCard: null,
       secondCard: null
     };
   }
 
+  shuffleCards() {
+    const shuffled = [...cardImages, ...cardImages].sort(() => 0.5 - Math.random());
+    this.setState({ cards: shuffled });
+  }
+
   handleCard(card) {
+    console.log(card)
     this.state.firstCard ? this.setState({ secondCard: card }) : this.setState({ firstCard: card });
   }
 
@@ -48,10 +55,15 @@ class Game extends React.Component {
     return (
       <div className={styles.game}>
         <h1>Memory game</h1>
-        <button>New game</button>
+        <button onClick={this.shuffleCards}>New game</button>
         <div className={styles.cards}>
           {this.state.cards.map((card, i) => {
-            return <Card card={card} handleCard={this.handleCard} key={i} />
+            return <Card
+              card={card}
+              handleCard={this.handleCard}
+              flipped={card === this.state.firstCard || card === this.state.secondCard}
+              key={i}
+            />
           })}
         </div>
       </div>
