@@ -59,12 +59,21 @@ class Game extends React.Component {
         const isMatched = this.state.firstCard.src === this.state.secondCard.src;
 
         if (isMatched) {
-          this.resetChosenCards();
           this.setState({ matched: [...this.state.matched, this.state.firstCard.id, this.state.secondCard.id] });
+          this.resetChosenCards();
         } else {
           setTimeout(() => this.resetChosenCards(), 1500);
         }
       }
+    }
+
+    const isCompleted = this.state.matched.length === this.state.cards.length;
+
+    if (isCompleted) {
+      setTimeout(() => {
+        alert('Game completed!');
+        this.shuffleCards();
+      }, 500);
     }
   }
 

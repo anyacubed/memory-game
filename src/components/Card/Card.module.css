@@ -6,6 +6,7 @@
   padding: 4px 8px;
   position: relative;
   transform: rotateY(0);
+  cursor: pointer;
 }
 
 .covered {
