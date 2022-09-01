@@ -22,7 +22,8 @@ class Game extends React.Component {
       cards: [],
       firstCard: null,
       secondCard: null,
-      matched: []
+      matched: [],
+      moves: 0
     };
   }
 
@@ -30,15 +31,15 @@ class Game extends React.Component {
     const shuffled = [...cardImages, ...cardImages].sort(() => 0.5 - Math.random()).map((image, i) => {
       return ({ ...image, id: i});
     });
-    this.setState({ cards: shuffled, matched: []});
+    this.setState({ cards: shuffled, matched: [], moves: 0 });
   }
 
   handleCard(card) {
-    if (this.state.firstCard && this.state.secondCard) {
+    if (this.state.firstCard !== null && this.state.secondCard !== null) {
       return;
     }
 
-    if (this.state.firstCard) {
+    if (this.state.firstCard !== null) {
       this.setState({ secondCard: card });
     } else {
       this.setState({ firstCard: card });
@@ -55,7 +56,9 @@ class Game extends React.Component {
 
   componentDidUpdate(_, prevState) {
     if (this.state.firstCard !== prevState.firstCard || this.state.secondCard !== prevState.secondCard) {
-      if (this.state.firstCard && this.state.secondCard) {
+      if (this.state.firstCard !== null && this.state.secondCard !== null) {
+        this.setState({ moves: this.state.moves + 1 });
+
         const isMatched = this.state.firstCard.src === this.state.secondCard.src;
 
         if (isMatched) {
@@ -71,7 +74,7 @@ class Game extends React.Component {
 
     if (isCompleted) {
       setTimeout(() => {
-        alert('Game completed!');
+        alert(`Congrats! You completed the game in ${this.state.moves} moves!`);
         this.shuffleCards();
       }, 500);
     }
@@ -83,7 +86,7 @@ class Game extends React.Component {
         <h1>Memory game</h1>
         <button onClick={this.shuffleCards}>New game</button>
         <div className={styles.cards}>
-          {this.state.cards.map((card, i) => {
+          {this.state.cards.map((card) => {
             const isFlipped =
             card === this.state.firstCard ||
             card === this.state.secondCard ||
@@ -93,7 +96,7 @@ class Game extends React.Component {
               card={card}
               handleCard={this.handleCard}
               flipped={isFlipped}
-              key={i}
+              key={card.id}
             />
           })}
         </div>
