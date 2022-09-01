@@ -24,3 +24,32 @@ button:hover {
   align-items: center;
   gap: 30px;
 }
+
+.overlay {
+  position: fixed;
+  inset: 0px;
+  background-color: rgba(255, 255, 255, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  max-width: 600px;
+  padding: 40px;
+  background-color: #643494;
+  color: #E0BBE4;
+  border-radius: 8px;
+  position: relative;
+  outline: none;
+}
+
+.modalCloseBtn {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  width: 35px;
+  height: 35px;
+  filter: invert(78%) sepia(14%) saturate(518%) hue-rotate(247deg) brightness(101%) contrast(90%);
+  cursor: pointer;
+}

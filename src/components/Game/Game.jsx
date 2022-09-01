@@ -1,5 +1,6 @@
 import React from 'react';
 import Card from '../Card/Card';
+import Modal from 'react-modal';
 
 import styles from './Game.module.css';
 
@@ -12,18 +13,24 @@ const cardImages = [
   { src: '/img/pizza.svg', matched: false }
 ];
 
+Modal.setAppElement("#root");
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.handleCard = this.handleCard.bind(this);
     this.shuffleCards = this.shuffleCards.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
 
     this.state = {
       cards: [],
       firstCard: null,
       secondCard: null,
-      moves: 0
+      moves: 0,
+      isModalOpen: false
     };
+
+    this.modalMessage = React.createRef();
   }
 
   shuffleCards() {
@@ -31,6 +38,7 @@ class Game extends React.Component {
       return ({...image});
     });
     this.setState({ cards: shuffled, moves: 0 });
+    this.resetChosenCards();
   }
 
   handleCard(card) {
@@ -75,14 +83,23 @@ class Game extends React.Component {
       }
     }
 
-    const isCompleted = this.state.cards.every((card) => card.matched);
+    if (this.state.isModalOpen === false) {
+      const isCompleted = this.state.cards.every((card) => card.matched);
 
-    if (isCompleted) {
-      setTimeout(() => {
-        alert(`Congrats! You completed the game in ${this.state.moves} moves!`);
-        this.shuffleCards();
-      }, 500);
+      if (isCompleted) {
+        setTimeout(() => {
+          this.toggleModal();
+        }, 500);
+      }
     }
+  }
+
+  toggleModal() {
+    if (this.state.isModalOpen === true) {
+      this.shuffleCards();
+    }
+
+    this.setState({ isModalOpen: !this.state.isModalOpen });
   }
 
   render() {
@@ -100,6 +117,14 @@ class Game extends React.Component {
             />
           })}
         </div>
+        <Modal
+          isOpen={this.state.isModalOpen}
+          onRequestClose={this.toggleModal}
+          className={styles.modal}
+          overlayClassName={styles.overlay}>
+            <img className={styles.modalCloseBtn} src="/img/close-button.svg" onClick={this.toggleModal} alt="" />
+            <h2>Congrats! <br /> You've completed the game in {this.state.moves} {this.state.moves === 1 ? 'move' : 'moves'}! </h2>
+        </Modal>
       </div>
     );
   }

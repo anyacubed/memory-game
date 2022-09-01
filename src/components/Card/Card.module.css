@@ -13,17 +13,3 @@
   position: absolute;
   transform: rotateY(90deg);
 }
-
-/* .card:hover {
-  animation: flip 1s linear;
-}
-
-@keyframes flip {
-  50% {
-    transform: rotateY(180deg);
-  }
-
-  to {
-    transform: rotateY(180deg);
-  }
-} */
