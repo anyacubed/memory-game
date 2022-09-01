@@ -4,12 +4,12 @@ import Card from '../Card/Card';
 import styles from './Game.module.css';
 
 const cardImages = [
-  { src: '/img/coffee.svg' },
-  { src: '/img/doughnut.svg' },
-  { src: '/img/hamburger.svg' },
-  { src: '/img/ice-cream.svg' },
-  { src: '/img/juice.svg' },
-  { src: '/img/pizza.svg' }
+  { src: '/img/coffee.svg', matched: false },
+  { src: '/img/doughnut.svg', matched: false },
+  { src: '/img/hamburger.svg', matched: false },
+  { src: '/img/ice-cream.svg', matched: false },
+  { src: '/img/juice.svg', matched: false },
+  { src: '/img/pizza.svg', matched: false }
 ];
 
 class Game extends React.Component {
@@ -22,16 +22,15 @@ class Game extends React.Component {
       cards: [],
       firstCard: null,
       secondCard: null,
-      matched: [],
       moves: 0
     };
   }
 
   shuffleCards() {
-    const shuffled = [...cardImages, ...cardImages].sort(() => 0.5 - Math.random()).map((image, i) => {
-      return ({ ...image, id: i});
+    const shuffled = [...cardImages, ...cardImages].sort(() => 0.5 - Math.random()).map((image) => {
+      return ({...image});
     });
-    this.setState({ cards: shuffled, matched: [], moves: 0 });
+    this.setState({ cards: shuffled, moves: 0 });
   }
 
   handleCard(card) {
@@ -62,7 +61,13 @@ class Game extends React.Component {
         const isMatched = this.state.firstCard.src === this.state.secondCard.src;
 
         if (isMatched) {
-          this.setState({ matched: [...this.state.matched, this.state.firstCard.id, this.state.secondCard.id] });
+          this.setState({ cards: this.state.cards.map((card) => {
+            if (card.src === this.state.firstCard.src) {
+              return { ...card, matched: true };
+            } else {
+              return card;
+            }
+          }) });
           this.resetChosenCards();
         } else {
           setTimeout(() => this.resetChosenCards(), 1500);
@@ -70,7 +75,7 @@ class Game extends React.Component {
       }
     }
 
-    const isCompleted = this.state.matched.length === this.state.cards.length;
+    const isCompleted = this.state.cards.every((card) => card.matched);
 
     if (isCompleted) {
       setTimeout(() => {
@@ -86,17 +91,12 @@ class Game extends React.Component {
         <h1>Memory game</h1>
         <button onClick={this.shuffleCards}>New game</button>
         <div className={styles.cards}>
-          {this.state.cards.map((card) => {
-            const isFlipped =
-            card === this.state.firstCard ||
-            card === this.state.secondCard ||
-            this.state.matched.includes(card.id);
-
+          {this.state.cards.map((card, i) => {
             return <Card
               card={card}
               handleCard={this.handleCard}
-              flipped={isFlipped}
-              key={card.id}
+              flipped={card === this.state.firstCard || card === this.state.secondCard || card.matched}
+              key={i}
             />
           })}
         </div>
