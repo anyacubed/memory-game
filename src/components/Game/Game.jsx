@@ -1,6 +1,6 @@
 import React from 'react';
-import Card from '../Card/Card';
 import Modal from 'react-modal';
+import Card from '../Card/Card.jsx';
 
 import styles from './Game.module.css';
 
@@ -13,11 +13,12 @@ const cardImages = [
   { src: '/img/pizza.svg', matched: false }
 ];
 
-Modal.setAppElement("#root");
+Modal.setAppElement('#root');
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
+
     this.handleCard = this.handleCard.bind(this);
     this.shuffleCards = this.shuffleCards.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
@@ -29,27 +30,27 @@ class Game extends React.Component {
       moves: 0,
       isModalOpen: false
     };
-
-    this.modalMessage = React.createRef();
   }
 
   shuffleCards() {
     const shuffled = [...cardImages, ...cardImages].sort(() => 0.5 - Math.random()).map((image) => {
-      return ({...image});
+      return {...image};
     });
+
     this.setState({ cards: shuffled, moves: 0 });
+
     this.resetChosenCards();
   }
 
   handleCard(card) {
-    if (this.state.firstCard !== null && this.state.secondCard !== null) {
-      return;
-    }
+    const { firstCard, secondCard } = this.state;
 
-    if (this.state.firstCard !== null) {
-      this.setState({ secondCard: card });
-    } else {
+    if (firstCard !== null && secondCard !== null) return;
+
+    if (firstCard === null) {
       this.setState({ firstCard: card });
+    } else {
+      this.setState({ secondCard: card });
     }
   }
 
@@ -62,20 +63,23 @@ class Game extends React.Component {
   }
 
   componentDidUpdate(_, prevState) {
-    if (this.state.firstCard !== prevState.firstCard || this.state.secondCard !== prevState.secondCard) {
-      if (this.state.firstCard !== null && this.state.secondCard !== null) {
-        this.setState({ moves: this.state.moves + 1 });
+    const { firstCard, secondCard, moves, cards, isModalOpen } = this.state;
 
-        const isMatched = this.state.firstCard.src === this.state.secondCard.src;
+    if (firstCard !== prevState.firstCard || secondCard !== prevState.secondCard) {
+      if (firstCard !== null && secondCard !== null) {
+        this.setState({ moves: moves + 1 });
+
+        const isMatched = firstCard.src === secondCard.src;
 
         if (isMatched) {
-          this.setState({ cards: this.state.cards.map((card) => {
-            if (card.src === this.state.firstCard.src) {
+          this.setState({ cards: cards.map((card) => {
+            if (card.src === firstCard.src) {
               return { ...card, matched: true };
             } else {
               return card;
             }
           }) });
+
           this.resetChosenCards();
         } else {
           setTimeout(() => this.resetChosenCards(), 1500);
@@ -83,8 +87,8 @@ class Game extends React.Component {
       }
     }
 
-    if (this.state.isModalOpen === false) {
-      const isCompleted = this.state.cards.every((card) => card.matched);
+    if (isModalOpen === false) {
+      const isCompleted = cards.every((card) => card.matched);
 
       if (isCompleted) {
         setTimeout(() => {
@@ -95,35 +99,40 @@ class Game extends React.Component {
   }
 
   toggleModal() {
-    if (this.state.isModalOpen === true) {
+    const { isModalOpen } = this.state;
+
+    if (isModalOpen === true) {
       this.shuffleCards();
     }
 
-    this.setState({ isModalOpen: !this.state.isModalOpen });
+    this.setState({ isModalOpen: !isModalOpen });
   }
 
   render() {
+    const {  cards, firstCard, secondCard, isModalOpen, moves } = this.state;
+
     return (
-      <div className={styles.game}>
+      <div>
         <h1>Memory game</h1>
         <button onClick={this.shuffleCards}>New game</button>
         <div className={styles.cards}>
-          {this.state.cards.map((card, i) => {
+          {cards.map((card, i) => {
             return <Card
               card={card}
               handleCard={this.handleCard}
-              flipped={card === this.state.firstCard || card === this.state.secondCard || card.matched}
+              flipped={card === firstCard || card === secondCard || card.matched}
               key={i}
             />
           })}
         </div>
         <Modal
-          isOpen={this.state.isModalOpen}
+          isOpen={isModalOpen}
           onRequestClose={this.toggleModal}
           className={styles.modal}
           overlayClassName={styles.overlay}>
-            <img className={styles.modalCloseBtn} src="/img/close-button.svg" onClick={this.toggleModal} alt="" />
-            <h2>Congrats! <br /> You've completed the game in {this.state.moves} {this.state.moves === 1 ? 'move' : 'moves'}! </h2>
+            <img className={styles.modalCloseBtn} src='/img/close-button.svg' onClick={this.toggleModal} alt='' />
+            <h2>Congratulations!</h2>
+            <h3>You have completed the game in {moves} {moves === 1 ? 'move' : 'moves'}!</h3>
         </Modal>
       </div>
     );

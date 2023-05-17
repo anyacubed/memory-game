@@ -3,26 +3,33 @@ import React from 'react';
 import styles from './Card.module.css';
 
 class Card extends React.Component {
-  constructor(props) {
-    super(props);
+  // className() {
+  //   const { flipped } = this.props;
+  //   const classes = [styles.card];
 
-    this.handleClick = this.handleClick.bind(this);
-  }
+  //   if (flipped) classes.push(styles.list_centered);
 
-  handleClick() {
-    this.props.handleCard(this.props.card);
-  }
+  //   return classes.join(' ');
+  // }
+
+  handleClick = () => {
+    const { handleCard, card } = this.props;
+
+    handleCard(card);
+  };
 
   render() {
+    const { flipped, card } = this.props;
+
     return (
       <>
         <img
-          className={`${styles.card} ${this.props.flipped ? '' : styles.covered}`}
-          src={this.props.card.src}
+          className={`${styles.card} ${flipped ? '' : styles.covered}`}
+          src={card.src}
           alt=''>
         </img>
         <img
-          className={`${styles.card} ${this.props.flipped ? styles.covered : ''}`}
+          className={`${styles.card} ${flipped ? styles.covered : ''}`}
           src='/img/default.svg'
           onClick={this.handleClick}
           alt='default card'>
